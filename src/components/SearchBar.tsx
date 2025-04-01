@@ -60,7 +60,7 @@ const SearchBar: React.FC = () => {
       ...searchFilters,
       name: profile.name,
     });
-    // Open the profile details view when clicking on a name suggestion
+    // Explicitly select the profile and open the profile details view
     setSelectedProfile(profile);
   };
 

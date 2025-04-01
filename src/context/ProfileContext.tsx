@@ -47,16 +47,33 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
     }
 
+    // Add the new profile to the profiles array
     setProfiles((prevProfiles) => [...prevProfiles, profile]);
+    
+    // Automatically select the newly added profile to show its details
+    setSelectedProfile(profile);
+    
+    toast({
+      title: "Profile Added",
+      description: `${profile.name}'s profile has been added successfully.`,
+    });
   };
 
   // Update an existing profile
   const updateProfile = (id: string, updatedProfile: Partial<Profile>) => {
-    setProfiles((prevProfiles) =>
-      prevProfiles.map((profile) =>
+    setProfiles((prevProfiles) => {
+      const newProfiles = prevProfiles.map((profile) =>
         profile.id === id ? { ...profile, ...updatedProfile, updatedAt: new Date().toISOString() } : profile
-      )
-    );
+      );
+      
+      // If the updated profile is currently selected, update the selected profile as well
+      if (selectedProfile?.id === id) {
+        const updatedSelectedProfile = newProfiles.find(p => p.id === id) || null;
+        setSelectedProfile(updatedSelectedProfile);
+      }
+      
+      return newProfiles;
+    });
   };
 
   // Delete a profile
