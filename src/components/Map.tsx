@@ -5,9 +5,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { Profile } from '../types';
 import { useToast } from '@/components/ui/use-toast';
 
-// Replace with your temporary Mapbox token for demo purposes
-// In production, this should come from environment variables or user input
-// For a real implementation, you'd need to get this from Supabase secrets or user input
+// We'll provide a way for user to input their own Mapbox token
+// This is just a placeholder that will be replaced by user input
 const MAPBOX_TOKEN = 'YOUR_MAPBOX_TOKEN';
 
 interface MapProps {
@@ -25,14 +24,26 @@ const Map: React.FC<MapProps> = ({ profile, profiles, isFullscreen = false }) =>
   const [mapTokenInput, setMapTokenInput] = useState<string>('');
   const { toast } = useToast();
 
+  // Try to get user's location
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      return new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+    }
+    return Promise.reject(new Error('Geolocation not supported'));
+  };
+
   // Function to initialize map
-  const initializeMap = (token: string) => {
+  const initializeMap = async (token: string) => {
     if (!mapContainer.current) return;
     try {
       mapboxgl.accessToken = token;
+      
+      // Initialize map
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/dark-v11', // Dark theme for the map
         zoom: 12,
       });
 
@@ -114,12 +125,20 @@ const Map: React.FC<MapProps> = ({ profile, profiles, isFullscreen = false }) =>
       }
 
       // Create new marker
-      const marker = new mapboxgl.Marker({ color: '#1A73E8' })
+      const marker = new mapboxgl.Marker({ color: '#1ABC9C' })
         .setLngLat([lng, lat])
-        .setPopup(new mapboxgl.Popup().setHTML(`
-          <div class="p-2">
-            <h3 class="font-bold">${profile.name}</h3>
-            <p>${profile.address.street}, ${profile.address.city}</p>
+        .setPopup(new mapboxgl.Popup({
+          className: 'bg-[#1e1e1e] text-[#E0E0E0] border border-[#1ABC9C]/30',
+        }).setHTML(`
+          <div class="p-3">
+            <div class="flex items-center mb-2">
+              <img src="${profile.imageUrl}" alt="${profile.name}" class="w-10 h-10 rounded-full object-cover mr-2 border border-[#1ABC9C]/30" />
+              <div>
+                <h3 class="font-bold text-[#E0E0E0]">${profile.name}</h3>
+                <p class="text-sm text-gray-400">${profile.address.city}, ${profile.address.state}</p>
+              </div>
+            </div>
+            <p class="text-sm">${profile.address.street}, ${profile.address.city}</p>
           </div>
         `))
         .addTo(map.current);
@@ -148,12 +167,20 @@ const Map: React.FC<MapProps> = ({ profile, profiles, isFullscreen = false }) =>
 
         bounds.extend([lng, lat]);
         
-        const marker = new mapboxgl.Marker({ color: '#1A73E8' })
+        const marker = new mapboxgl.Marker({ color: '#1ABC9C' })
           .setLngLat([lng, lat])
-          .setPopup(new mapboxgl.Popup().setHTML(`
-            <div class="p-2">
-              <h3 class="font-bold">${p.name}</h3>
-              <p>${p.address.street}, ${p.address.city}</p>
+          .setPopup(new mapboxgl.Popup({
+            className: 'bg-[#1e1e1e] text-[#E0E0E0] border border-[#1ABC9C]/30',
+          }).setHTML(`
+            <div class="p-3">
+              <div class="flex items-center mb-2">
+                <img src="${p.imageUrl}" alt="${p.name}" class="w-10 h-10 rounded-full object-cover mr-2 border border-[#1ABC9C]/30" />
+                <div>
+                  <h3 class="font-bold text-[#E0E0E0]">${p.name}</h3>
+                  <p class="text-sm text-gray-400">${p.address.city}, ${p.address.state}</p>
+                </div>
+              </div>
+              <p class="text-sm">${p.address.street}, ${p.address.city}</p>
             </div>
           `))
           .addTo(map.current);
@@ -174,11 +201,11 @@ const Map: React.FC<MapProps> = ({ profile, profiles, isFullscreen = false }) =>
   return (
     <div className="flex flex-col h-full">
       {mapToken === 'YOUR_MAPBOX_TOKEN' && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+        <div className="bg-[#2a2a2a] border-l-4 border-[#1ABC9C] p-4 mb-4">
           <div className="flex items-start">
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-yellow-800">Mapbox Token Required</h3>
-              <div className="mt-2 text-sm text-yellow-700">
+              <h3 className="text-sm font-medium text-[#E0E0E0]">Mapbox Token Required</h3>
+              <div className="mt-2 text-sm text-gray-300">
                 <p>Please enter your Mapbox token to use the map functionality:</p>
                 <div className="mt-2 flex space-x-2">
                   <input
@@ -186,17 +213,17 @@ const Map: React.FC<MapProps> = ({ profile, profiles, isFullscreen = false }) =>
                     value={mapTokenInput}
                     onChange={(e) => setMapTokenInput(e.target.value)}
                     placeholder="Enter Mapbox token"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
+                    className="flex-1 px-3 py-2 bg-[#333333] border border-gray-700 rounded-md text-sm text-[#E0E0E0]"
                   />
                   <button
                     onClick={handleSetMapToken}
-                    className="px-4 py-2 bg-geo-blue text-white rounded-md text-sm hover:bg-geo-darkBlue transition"
+                    className="px-4 py-2 bg-[#1ABC9C] text-white rounded-md text-sm hover:bg-[#16a085] transition"
                   >
                     Set Token
                   </button>
                 </div>
-                <p className="text-xs mt-2">
-                  Get a token at <a href="https://account.mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">mapbox.com</a>
+                <p className="text-xs mt-2 text-gray-400">
+                  Get a token at <a href="https://account.mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-[#1ABC9C] hover:underline">mapbox.com</a>
                 </p>
               </div>
             </div>
@@ -206,13 +233,13 @@ const Map: React.FC<MapProps> = ({ profile, profiles, isFullscreen = false }) =>
       
       <div 
         ref={mapContainer} 
-        className={`map-container relative ${isFullscreen ? 'flex-1' : 'h-[400px]'} rounded-lg shadow-md overflow-hidden`}
+        className={`map-container relative ${isFullscreen ? 'flex-1' : 'h-[400px]'} rounded-lg overflow-hidden bg-[#333333]`}
       >
         {!mapLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#1a1a1a]">
             <div className="flex flex-col items-center space-y-2">
-              <div className="w-8 h-8 border-4 border-geo-blue border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-geo-darkBlue font-medium">Loading map...</p>
+              <div className="w-8 h-8 border-4 border-[#1ABC9C] border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-[#E0E0E0] font-medium">Loading map...</p>
             </div>
           </div>
         )}

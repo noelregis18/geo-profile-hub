@@ -4,7 +4,7 @@ import { Profile } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Map } from 'lucide-react';
+import { Map, ExternalLink } from 'lucide-react';
 
 interface ProfileCardProps {
   profile: Profile;
@@ -16,18 +16,18 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onSummaryClick, onDe
   const { name, imageUrl, description, tags = [] } = profile;
 
   return (
-    <Card className="profile-card w-full bg-white animate-fade-in">
+    <Card className="profile-card w-full bg-[#1e1e1e] border-gray-800 hover:border-[#1ABC9C]/50 animate-fade-in">
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <img
               src={imageUrl}
               alt={name}
-              className="w-14 h-14 rounded-full object-cover border-2 border-geo-lightBlue"
+              className="w-14 h-14 rounded-full object-cover border-2 border-[#1ABC9C]/30"
             />
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">{name}</h3>
-              <p className="text-sm text-geo-darkGray">
+              <h3 className="text-lg font-semibold text-[#E0E0E0]">{name}</h3>
+              <p className="text-sm text-gray-400">
                 {profile.address.city}, {profile.address.state}
               </p>
             </div>
@@ -35,11 +35,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onSummaryClick, onDe
         </div>
       </CardHeader>
       <CardContent className="pt-2">
-        <p className="text-sm text-gray-700 mb-3 line-clamp-2">{description}</p>
+        <p className="text-sm text-gray-300 mb-3 line-clamp-2">{description}</p>
         
         <div className="flex flex-wrap gap-1 mb-2">
           {tags.map((tag, index) => (
-            <Badge key={index} variant="secondary" className="bg-geo-lightBlue text-geo-darkBlue font-normal">
+            <Badge key={index} variant="secondary" className="bg-[#2a2a2a] text-[#1ABC9C] border border-[#1ABC9C]/20 font-normal">
               {tag}
             </Badge>
           ))}
@@ -49,7 +49,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onSummaryClick, onDe
         <Button
           variant="outline"
           size="sm"
-          className="text-geo-blue border-geo-blue hover:bg-geo-lightBlue hover:text-geo-darkBlue btn-pulse"
+          className="text-[#1ABC9C] border-[#1ABC9C] hover:bg-[#1ABC9C]/10 hover:text-[#1ABC9C] btn-pulse"
           onClick={onSummaryClick}
         >
           <Map className="mr-1 h-4 w-4" />
@@ -59,10 +59,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onSummaryClick, onDe
         <Button
           variant="ghost"
           size="sm"
-          className="text-geo-darkGray hover:text-geo-darkBlue"
+          className="text-gray-400 hover:text-[#1ABC9C]"
           onClick={onDetailsClick}
         >
           View Details
+          <ExternalLink className="ml-1 h-3 w-3" />
         </Button>
       </CardFooter>
     </Card>

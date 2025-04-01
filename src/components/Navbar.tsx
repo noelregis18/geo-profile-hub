@@ -1,55 +1,72 @@
 
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { MapPin, Users, Settings } from 'lucide-react';
+import { NavLink } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/context/ThemeContext";
+import { Moon, Sun, Users, Map, Settings, Mail } from "lucide-react";
 
-const Navbar: React.FC = () => {
-  const location = useLocation();
-  
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
+const Navbar = () => {
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="bg-white border-b">
-      <div className="container px-4 sm:px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <MapPin className="h-6 w-6 text-geo-blue" />
-          <h1 className="text-xl font-bold text-gray-900">Geo Profile Hub</h1>
+    <header className="sticky top-0 z-50 w-full border-b bg-gradient-to-r from-[#121212] to-[#1e1e1e] dark:bg-gradient-to-r dark:from-[#121212] dark:to-[#1e1e1e] border-gray-800 shadow-md backdrop-blur-sm transition-all duration-200">
+      <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
+        <div className="flex gap-6 md:gap-10">
+          <NavLink to="/" className="flex items-center space-x-2">
+            <Map className="h-6 w-6 text-[#1ABC9C]" />
+            <span className="inline-block font-bold text-[#E0E0E0] bg-gradient-to-r from-[#1ABC9C] to-blue-400 bg-clip-text text-transparent">Geo Profile Hub</span>
+          </NavLink>
+          <nav className="flex gap-6">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `hidden md:flex items-center text-sm font-medium transition-colors hover:text-[#1ABC9C] ${
+                  isActive ? "text-[#1ABC9C]" : "text-[#E0E0E0]"
+                }`
+              }
+            >
+              <Users className="mr-1 h-4 w-4" />
+              <span>Profiles</span>
+            </NavLink>
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                `hidden md:flex items-center text-sm font-medium transition-colors hover:text-[#1ABC9C] ${
+                  isActive ? "text-[#1ABC9C]" : "text-[#E0E0E0]"
+                }`
+              }
+            >
+              <Settings className="mr-1 h-4 w-4" />
+              <span>Admin</span>
+            </NavLink>
+            <NavLink
+              to="/contact"
+              className={({ isActive }) =>
+                `hidden md:flex items-center text-sm font-medium transition-colors hover:text-[#1ABC9C] ${
+                  isActive ? "text-[#1ABC9C]" : "text-[#E0E0E0]"
+                }`
+              }
+            >
+              <Mail className="mr-1 h-4 w-4" />
+              <span>Contact</span>
+            </NavLink>
+          </nav>
         </div>
-        
-        <nav className="hidden md:flex items-center space-x-1">
-          <Link to="/">
-            <Button 
-              variant={isActive('/') ? "default" : "ghost"} 
-              className={isActive('/') ? "bg-geo-blue hover:bg-geo-darkBlue" : ""}
+        <div className="flex flex-1 items-center justify-end space-x-4">
+          <nav className="flex items-center space-x-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Toggle theme"
+              className="text-[#E0E0E0] hover:text-[#1ABC9C] hover:bg-[#2a2a2a]"
+              onClick={toggleTheme}
             >
-              <Users className="mr-2 h-4 w-4" />
-              Profiles
+              {theme === "light" ? (
+                <Moon className="h-5 w-5" />
+              ) : (
+                <Sun className="h-5 w-5" />
+              )}
             </Button>
-          </Link>
-          
-          <Link to="/admin">
-            <Button 
-              variant={isActive('/admin') ? "default" : "ghost"}
-              className={isActive('/admin') ? "bg-geo-blue hover:bg-geo-darkBlue" : ""}
-            >
-              <Settings className="mr-2 h-4 w-4" />
-              Admin
-            </Button>
-          </Link>
-        </nav>
-        
-        <div className="md:hidden">
-          <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
-            <span className="sr-only">Menu</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-              <line x1="4" x2="20" y1="12" y2="12"></line>
-              <line x1="4" x2="20" y1="6" y2="6"></line>
-              <line x1="4" x2="20" y1="18" y2="18"></line>
-            </svg>
-          </Button>
+          </nav>
         </div>
       </div>
     </header>
