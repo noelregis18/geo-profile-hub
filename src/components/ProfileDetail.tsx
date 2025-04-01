@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Profile } from '@/types';
 import { Button } from '@/components/ui/button';

@@ -1,13 +1,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Profile } from '../types';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { ExternalLink } from 'lucide-react';
-
-// Set a default Mapbox token (you should replace this with your actual token later)
-const MAPBOX_TOKEN = 'pk.eyJ1Ijoibm9lbHJlZ2lzMTgiLCJhIjoiY2x6NG5iNGZsMDBhdTJpcGQ2eG8wamwxdyJ9.b82-OkGjFxOG8fFy0WhBnQ';
 
 interface MapProps {
   profile?: Profile | null;
@@ -27,46 +23,12 @@ const Map: React.FC<MapProps> = ({ profile, profiles, isFullscreen = false }) =>
 
   useEffect(() => {
     if (!mapContainer.current) return;
-
+    
     try {
-      mapboxgl.accessToken = MAPBOX_TOKEN;
-      
-      // Create map placeholder
-      const mapPlaceholder = document.createElement('div');
-      mapPlaceholder.className = 'h-full w-full flex items-center justify-center bg-[#1e1e1e] rounded-lg';
-      
-      // Add a "View on Google Maps" button
-      const googleMapsButton = document.createElement('button');
-      googleMapsButton.className = 'flex items-center space-x-2 px-4 py-2 bg-[#1ABC9C] text-white rounded hover:bg-[#16a085] transition-colors';
-      
-      if (profile) {
-        googleMapsButton.innerHTML = `View ${profile.name}'s Location on Google Maps <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>`;
-        googleMapsButton.onclick = () => {
-          openInGoogleMaps(
-            profile.address.coordinates.lat,
-            profile.address.coordinates.lng,
-            profile.name
-          );
-        };
-      } else if (profiles && profiles.length > 0) {
-        googleMapsButton.innerHTML = `View All Locations on Google Maps <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>`;
-        googleMapsButton.onclick = () => {
-          // Just open Google Maps with the first profile location
-          const firstProfile = profiles[0];
-          openInGoogleMaps(
-            firstProfile.address.coordinates.lat,
-            firstProfile.address.coordinates.lng,
-            "All Profiles"
-          );
-        };
-      }
-      
-      // Clear existing content and append button
-      mapContainer.current.innerHTML = '';
-      mapPlaceholder.appendChild(googleMapsButton);
-      mapContainer.current.appendChild(mapPlaceholder);
-      
       setMapLoaded(true);
+      
+      // Set up the content in a safer way that doesn't manipulate DOM directly
+      // This avoids the removeChild error
     } catch (error) {
       console.error('Error with map:', error);
       toast({
@@ -75,20 +37,53 @@ const Map: React.FC<MapProps> = ({ profile, profiles, isFullscreen = false }) =>
         variant: "destructive"
       });
     }
-
-    // No cleanup needed since we're not creating a mapbox map
   }, [profile, profiles, toast]);
 
+  // Render the Google Maps button directly in JSX instead of DOM manipulation
   return (
     <div className="flex flex-col h-full">
       <div 
         ref={mapContainer} 
-        className={`map-container relative ${isFullscreen ? 'flex-1' : 'h-[400px]'} rounded-lg overflow-hidden bg-[#333333] flex items-center justify-center`}
+        className={`map-container relative ${isFullscreen ? 'flex-1' : 'h-[400px]'} rounded-lg overflow-hidden bg-[#1e1e1e] flex items-center justify-center`}
       >
-        {!mapLoaded && (
+        {!mapLoaded ? (
           <div className="flex flex-col items-center space-y-2">
             <div className="w-8 h-8 border-4 border-[#1ABC9C] border-t-transparent rounded-full animate-spin"></div>
             <p className="text-[#E0E0E0] font-medium">Loading map options...</p>
+          </div>
+        ) : (
+          <div className="h-full w-full flex items-center justify-center bg-[#1e1e1e] rounded-lg">
+            {profile ? (
+              <button 
+                onClick={() => openInGoogleMaps(
+                  profile.address.coordinates.lat,
+                  profile.address.coordinates.lng,
+                  profile.name
+                )}
+                className="flex items-center space-x-2 px-4 py-2 bg-[#1ABC9C] text-white rounded hover:bg-[#16a085] transition-colors"
+              >
+                View {profile.name}'s Location on Google Maps 
+                <ExternalLink className="ml-2 h-4 w-4" />
+              </button>
+            ) : profiles && profiles.length > 0 ? (
+              <button 
+                onClick={() => {
+                  // Open Google Maps with the first profile location
+                  const firstProfile = profiles[0];
+                  openInGoogleMaps(
+                    firstProfile.address.coordinates.lat,
+                    firstProfile.address.coordinates.lng,
+                    "All Profiles"
+                  );
+                }}
+                className="flex items-center space-x-2 px-4 py-2 bg-[#1ABC9C] text-white rounded hover:bg-[#16a085] transition-colors"
+              >
+                View All Locations on Google Maps
+                <ExternalLink className="ml-2 h-4 w-4" />
+              </button>
+            ) : (
+              <p className="text-[#E0E0E0]">No location data available</p>
+            )}
           </div>
         )}
       </div>
