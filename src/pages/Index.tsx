@@ -19,6 +19,13 @@ const Index: React.FC = () => {
     setPageLoaded(true);
   }, []);
 
+  // When selectedProfile changes, switch to detail view if it exists
+  useEffect(() => {
+    if (selectedProfile) {
+      setViewMode('detail');
+    }
+  }, [selectedProfile]);
+
   const handleProfileSelect = (profileId: string) => {
     const profile = profiles.find(p => p.id === profileId);
     if (profile) {
@@ -85,10 +92,6 @@ const Index: React.FC = () => {
               {showMap && (
                 <div className="w-full lg:w-1/2 h-[500px] lg:h-auto animate-fade-in delay-300">
                   <div className="sticky top-6">
-                    <h2 className="text-2xl font-bold text-[#E0E0E0] mb-4 flex items-center">
-                      <MapPin className="mr-2 h-6 w-6 text-[#1ABC9C]" />
-                      Location Map
-                    </h2>
                     <div className="bg-[#1e1e1e] p-4 rounded-lg shadow-sm border border-gray-800 h-[500px]">
                       <Map
                         profile={selectedProfile}

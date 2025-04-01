@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { Profile, SearchFilters } from '../types';
 import { mockProfiles } from '../data/mockData';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProfileContextType {
   profiles: Profile[];
@@ -25,9 +26,27 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   // Add a new profile
   const addProfile = (profile: Profile) => {
+    // Ensure coordinates are properly set to avoid issues with map integration
+    if (!profile.address.coordinates || 
+        typeof profile.address.coordinates.lat !== 'number' || 
+        typeof profile.address.coordinates.lng !== 'number') {
+      
+      // Default to a location in India if coordinates are missing or invalid
+      profile.address.coordinates = {
+        lat: 22.5726, // Default latitude (center of India)
+        lng: 88.3639  // Default longitude (Kolkata)
+      };
+
+      toast({
+        title: "Location Coordinates Updated",
+        description: "Using default coordinates since valid ones were not provided.",
+      });
+    }
+
     setProfiles((prevProfiles) => [...prevProfiles, profile]);
   };
 

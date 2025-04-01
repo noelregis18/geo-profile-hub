@@ -7,7 +7,7 @@ import { Search, MapPin, X, User, Tag } from 'lucide-react';
 import { Profile } from '@/types';
 
 const SearchBar: React.FC = () => {
-  const { setSearchFilters, searchFilters, profiles } = useProfiles();
+  const { setSearchFilters, searchFilters, profiles, setSelectedProfile } = useProfiles();
   const [nameInput, setNameInput] = useState(searchFilters.name || '');
   const [locationInput, setLocationInput] = useState(searchFilters.location || '');
   const [showNameSuggestions, setShowNameSuggestions] = useState(false);
@@ -60,6 +60,8 @@ const SearchBar: React.FC = () => {
       ...searchFilters,
       name: profile.name,
     });
+    // Open the profile details view when clicking on a name suggestion
+    setSelectedProfile(profile);
   };
 
   const handleLocationSuggestionClick = (profile: Profile) => {
