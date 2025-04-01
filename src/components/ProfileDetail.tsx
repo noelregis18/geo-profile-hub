@@ -4,7 +4,7 @@ import { Profile } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Map } from '@/components/Map';
+import Map from '@/components/Map';
 import { 
   MapPin, Mail, Phone, Globe, Clock, Tag, Heart 
 } from 'lucide-react';

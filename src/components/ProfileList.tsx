@@ -3,6 +3,7 @@ import React from 'react';
 import { useProfiles } from '@/context/ProfileContext';
 import ProfileCard from './ProfileCard';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { MapPin } from 'lucide-react';
 
 interface ProfileListProps {
   onProfileSelect: (profileId: string) => void;
@@ -30,7 +31,7 @@ const ProfileList: React.FC<ProfileListProps> = ({
     return (
       <div className="flex flex-col items-center justify-center py-10 text-center">
         <div className="w-16 h-16 bg-geo-lightBlue rounded-full flex items-center justify-center mb-4">
-          <Map className="h-8 w-8 text-geo-blue" />
+          <MapPin className="h-8 w-8 text-geo-blue" />
         </div>
         <h3 className="text-lg font-medium text-gray-900 mb-1">No profiles found</h3>
         <p className="text-sm text-gray-500 max-w-md">

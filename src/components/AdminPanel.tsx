@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { 
   Dialog,
   DialogContent,
@@ -95,7 +96,7 @@ const AdminPanel: React.FC = () => {
       setFormData({
         ...formData,
         [parent]: {
-          ...formData[parent as keyof Profile],
+          ...(formData[parent as keyof Profile] as Record<string, unknown>),
           [child]: value
         }
       });
