@@ -26,13 +26,19 @@ const Contact: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
+    // Create a mailto link with the form data
+    const mailtoLink = `mailto:noel.regis04@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
+    
+    // Open the mailto link in a new window
+    window.open(mailtoLink, '_blank');
+    
+    toast({
+      title: "Message Ready to Send",
+      description: "Your email client has been opened with your message.",
+    });
+    
+    // Reset form after a short delay
     setTimeout(() => {
-      toast({
-        title: "Message Sent!",
-        description: "Thanks for reaching out. I'll get back to you soon!",
-      });
-      
       setFormData({
         name: '',
         email: '',
@@ -41,7 +47,12 @@ const Contact: React.FC = () => {
       });
       
       setIsSubmitting(false);
-    }, 1500);
+    }, 1000);
+  };
+
+  // Function to open Google Maps with the location
+  const openGoogleMaps = () => {
+    window.open('https://www.google.com/maps?q=Asansol,+West+Bengal,+India', '_blank');
   };
 
   return (
@@ -83,11 +94,14 @@ const Contact: React.FC = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-4">
+                <div className="flex items-start space-x-4 cursor-pointer" onClick={openGoogleMaps}>
                   <MapPin className="w-6 h-6 text-[#1ABC9C] mt-1" />
                   <div>
                     <h3 className="font-semibold">Location</h3>
-                    <p>Asansol, West Bengal, India</p>
+                    <p className="hover:text-[#1ABC9C] transition-colors flex items-center">
+                      Asansol, West Bengal, India
+                      <ExternalLink className="w-4 h-4 ml-1" />
+                    </p>
                   </div>
                 </div>
               </div>

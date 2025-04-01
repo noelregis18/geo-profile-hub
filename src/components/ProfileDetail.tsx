@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Map from '@/components/Map';
 import { 
-  MapPin, Mail, Phone, Globe, Clock, Tag, Heart, ArrowLeft 
+  MapPin, Mail, Phone, Globe, Clock, Tag, Heart, ArrowLeft, ExternalLink 
 } from 'lucide-react';
 
 interface ProfileDetailProps {
@@ -22,6 +22,12 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onClose }) => {
       month: 'long',
       day: 'numeric'
     }).format(date);
+  };
+
+  // Function to open Google Maps for this profile
+  const openInGoogleMaps = () => {
+    const { lat, lng } = profile.address.coordinates;
+    window.open(`https://www.google.com/maps?q=${lat},${lng}&z=15&t=m&hl=en&title=${encodeURIComponent(profile.name)}`, '_blank');
   };
 
   return (
@@ -176,13 +182,17 @@ const ProfileDetail: React.FC<ProfileDetailProps> = ({ profile, onClose }) => {
                 <p className="text-[#E0E0E0]">
                   {profile.address.city}, {profile.address.state} {profile.address.zip}
                 </p>
-                <p className="text-[#E0E0E0]">
+                <p className="text-[#E0E0E0] mb-4">
                   {profile.address.country}
                 </p>
-              </div>
-              
-              <div className="h-[400px] rounded-md overflow-hidden">
-                <Map profile={profile} />
+                
+                <Button 
+                  onClick={openInGoogleMaps}
+                  className="bg-[#1ABC9C] hover:bg-[#16a085] text-white transition-colors"
+                >
+                  View on Google Maps
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             </CardContent>
           </Card>
